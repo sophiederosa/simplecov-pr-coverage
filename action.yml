@@ -2,10 +2,17 @@ name: 'Your name here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 inputs:
-  milliseconds: # change this
+  token:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: The GitHub token secret
+  failed_threshold:
+    required: false
+    description: The threshold for simplecov failure
+    default: 90
+  result_path:
+    required: false
+    description: The path to .last_run.json
+    default: coverage/.last_run.json
 runs:
   using: 'node12'
   main: 'dist/index.js'
