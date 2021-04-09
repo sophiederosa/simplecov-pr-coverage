@@ -41,6 +41,16 @@ async function fetchPullRequest(): Promise<{ number: number; changed_files: numb
 
 async function run(): Promise<void> {
   try {
+    const pr = await fetchPullRequest()
+
+    if (!pr) {
+      core.setFailed(`Could not get pull request from context, exiting`)
+      return
+    }
+
+    const files = await getFiles(pr.number)
+    console.log(files)
+
     exec("rspec", (error: { message: any; }, stdout: any, stderr: any) => {
       if (error) {
           console.log(`error: ${error.message}`);
@@ -53,15 +63,6 @@ async function run(): Promise<void> {
       console.log(`stdout: ${stdout}`);
     });
 
-    const pr = await fetchPullRequest()
-
-    if (!pr) {
-      core.setFailed(`Could not get pull request from context, exiting`)
-      return
-    }
-
-    const files = await getFiles(pr.number)
-    core.setOutput("file", files)
     
   } catch (error) {
     core.setFailed(error.message)
