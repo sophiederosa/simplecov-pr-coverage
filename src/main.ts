@@ -27,6 +27,18 @@ function getFiles(prNumber: number): Promise<Files> {
   return response
 }
 
+async function fetchPullRequest(): Promise<{ number: number; changed_files: number } | undefined> {
+  const token = core.getInput('token');
+  const octokit = getOctokit(token);
+
+  return context.payload.pull_request
+        ? {
+              number: context.payload.pull_request.number,
+              changed_files: context.payload.pull_request["changed_files"],
+          }
+        : undefined
+}
+
 async function run(): Promise<void> {
   try {
     exec("rspec", (error: { message: any; }, stdout: any, stderr: any) => {
@@ -40,6 +52,17 @@ async function run(): Promise<void> {
       }
       console.log(`stdout: ${stdout}`);
     });
+
+    const pr = await fetchPullRequest()
+
+    if (!pr) {
+      core.setFailed(`Could not get pull request from context, exiting`)
+      return
+    }
+
+    const files = await getFiles(pr.number)
+    core.setOutput("file", files)
+    
   } catch (error) {
     core.setFailed(error.message)
   }
