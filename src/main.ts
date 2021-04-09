@@ -23,6 +23,8 @@ function getFiles(prNumber: number) {
     pull_number: prNumber
   });
 
+  console.log(response)
+
   let files = [];
   for(let file of response.data) {
     files.push(file.filename)
@@ -52,7 +54,7 @@ async function run(): Promise<void> {
       return
     }
 
-    const files = await getFiles(pr.number)
+    const files = getFiles(pr.number)
     console.log(files)
 
     exec("rspec", (error: { message: any; }, stdout: any, stderr: any) => {
@@ -64,7 +66,6 @@ async function run(): Promise<void> {
           console.log(`stderr: ${stderr}`);
           return;
       }
-      console.log(`stdout: ${stdout}`);
     });
 
     
