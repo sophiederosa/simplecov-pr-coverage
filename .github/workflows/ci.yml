@@ -5,6 +5,8 @@ on: # rebuild any PRs and main branch changes
     branches:
       - main
       - 'releases/*'
+env:
+  rubyVersion: "2.7.1"
 
 jobs:
   build:
@@ -21,9 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ./
+      - uses: ruby/setup-ruby@v1.47.0
         with:
-          milliseconds: 1000
+          ruby-version: ${{ env.rubyVersion }}
+      - run: bundle install
+      - uses: ./
+        with: 
+          token: ${{ github.token }}
   lint:
     runs-on: ubuntu-latest
     steps: 
