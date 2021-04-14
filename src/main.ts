@@ -56,7 +56,7 @@ async function run(): Promise<void> {
     }
 
     const files = getFiles(pr.number)
-    console.log(files)
+    console.log("hello")
 
     exec("rspec", (error: { message: any; }) => {
       
