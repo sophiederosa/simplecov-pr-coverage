@@ -4,7 +4,6 @@ import * as path from 'path';
 import { context, getOctokit } from '@actions/github';
 
 import { Constants } from './constants/Constants';
-import { Files } from './models/Files';
 import { ResultSet } from './models/ResultSet';
 
 const { exec } = require("child_process");
@@ -14,7 +13,7 @@ function parseResults(resultSetPath: string): ResultSet {
   return JSON.parse(content.toString()) as ResultSet
 }
 
-function getFiles(prNumber: number): Promise<Files> {
+function getFiles(prNumber: number) {
   const token = core.getInput('token');
   const octokit = getOctokit(token);
   
@@ -24,7 +23,15 @@ function getFiles(prNumber: number): Promise<Files> {
     pull_number: prNumber
   });
 
-  return response
+  console.log("hello")
+  console.log(response)
+
+  let files = [];
+  for(let file of response.data) {
+    files.push(file.filename)
+  }
+
+  return files
 }
 
 async function fetchPullRequest(): Promise<{ number: number; changed_files: number } | undefined> {
@@ -41,18 +48,6 @@ async function fetchPullRequest(): Promise<{ number: number; changed_files: numb
 
 async function run(): Promise<void> {
   try {
-    exec("rspec", (error: { message: any; }, stdout: any, stderr: any) => {
-      if (error) {
-          console.log(`error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          return;
-      }
-      console.log(`stdout: ${stdout}`);
-    });
-
     const pr = await fetchPullRequest()
 
     if (!pr) {
@@ -60,8 +55,13 @@ async function run(): Promise<void> {
       return
     }
 
-    const files = await getFiles(pr.number)
-    core.setOutput("file", files)
+    const files = getFiles(pr.number)
+    console.log("hello")
+
+    exec("rspec", (error: { message: any; }) => {
+      
+    });
+
     
   } catch (error) {
     core.setFailed(error.message)
