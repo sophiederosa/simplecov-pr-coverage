@@ -23,6 +23,7 @@ function getFiles(prNumber: number) {
     pull_number: prNumber
   });
 
+console.log("hello")
   console.log(response)
 
   let files = [];
