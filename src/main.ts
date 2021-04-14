@@ -23,7 +23,7 @@ function getFiles(prNumber: number) {
     pull_number: prNumber
   });
 
-console.log("hello")
+  console.log("hello")
   console.log(response)
 
   let files = [];
@@ -58,15 +58,8 @@ async function run(): Promise<void> {
     const files = getFiles(pr.number)
     console.log(files)
 
-    exec("rspec", (error: { message: any; }, stdout: any, stderr: any) => {
-      if (error) {
-          console.log(`error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          return;
-      }
+    exec("rspec", (error: { message: any; }) => {
+      
     });
 
     
